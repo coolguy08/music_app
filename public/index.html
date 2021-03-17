@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suno Dil se</title>
+    <link rel="stylesheet" href="main.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Sofia' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="center logo">Suno Dil se</h1>
+
+
+        <div id="search_bar">
+        <input id='term' type="text" name="search" class="search_bar" value=''/>
+        &nbsp;&nbsp;
+        <button class="search_btn" onclick="search()">Search</button>
+    </div>
+        
+        <div id="msg"></div>
+
+        <div id='song' class="hide">
+            <br>
+            <div id='song_vr'>
+                <img id="song_img" src=''>
+                <div id='song_details'>
+                    <h4 >Title : <span id='title'>tere naam</span></h3>
+                        <h4 >Year : <span id='year'>2007</span></h3>
+                            <h4>Lang : <span id='lang'>hindi</span></h3>
+                </div>
+                
+                
+            </div>
+            
+            <h5 id='by'>Track from Alka Yagnik and Udit Narayan from album Tere Naam.</h4>
+        </div>
+
+
+        <div id='toolbox'>
+            <div id='seekbar_box'>
+                <br>
+                
+                <input id='seeker' class='slider' type='range'  min='0' max='327' value='0'/>
+                <div id="timer">
+                    <div id='current'>00:00</div>
+                    <div id='duration'>00:00</div>
+
+                </div>
+            </div>
+
+                <div id="control">
+                    <div onclick="playprev()"><a><i class="fa fa-chevron-circle-left fa-lg"></i></a></div>
+                    <div class='' id='loader'><a onclick="play_pause()" id='play_pause'><i id='song_status' class="fa fa-pause fa-lg"></i></a></div>
+                    <div>
+                        <a onclick="playnext()"><i class="fa fa-chevron-circle-right fa-lg"></i></a>
+                    </div>
+        
+                </div>   
+        </div>
+       
+        
+
+    </div>
+<script src="main.js">
+</script>
+</body>
+</html>
