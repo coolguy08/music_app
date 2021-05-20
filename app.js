@@ -9,7 +9,9 @@ const cors=require('cors');
 app.use(express.static(__dirname + '/public'));
 app.use(cors());
 
+const cache={
 
+}
 
 app.get('/song',async (req,res)=>{
 
@@ -17,21 +19,23 @@ app.get('/song',async (req,res)=>{
     //console.log(req.query)
     const endpoint=`https://www.jiosaavn.com/api.php?__call=autocomplete.get&query=${req.query.q}&_format=json`;
     console.log(endpoint);
-    
-
-    try{
+     try{
       var response=await fetch(endpoint).then(data=>data.text());
 
       //console.log(extract(response));
   
       const data=JSON.parse(extract(response));
-      
       const id=getsongid(data.songs.data[0].url);
-      const song_full_details=await getsongurl(id);
 
-      //res.send(`<h1><a href=${song_full_details.auth_url}>click me</a></h1>`);
-      
+      if(cache[id])//checking cache data
+      {
+        res.json(JSON.parse(cache[id]));
+        return;
+      }
+
+      const song_full_details=await getsongurl(id); 
       const url=await redirected_url(song_full_details.auth_data.auth_url);
+      cache[id]=JSON.stringify({'url':url,'details':song_full_details.details});
       res.json({'url':url,'details':song_full_details.details});
 
 
@@ -47,6 +51,12 @@ app.get('/song',async (req,res)=>{
 app.get('/get_song_by_eurl',async(req,res)=>{//get song by encrypted url
   // console.log(req.query.eurl)
   const media_url=decode(req.query.eurl);
+  if(cache[id])
+  {
+    const data=JSON.parse(cache[id]);
+    res.json({'url':data.url});
+    return;
+  }
   // console.log(media_url);
   geturl=`https://www.jiosaavn.com/api.php?__call=song.generateAuthToken&url=${media_url}&bitrate=160&api_version=4&_format=json&ctx=wap6dot0&_marker=0
   `
@@ -64,18 +74,20 @@ app.get('/get_song_by_eurl',async(req,res)=>{//get song by encrypted url
 app.get('/songs',async (req,res)=>{
 
 const response=await fetch(`https://www.jiosaavn.com/api.php?__call=webapi.get&token=${req.query.artistid}&type=artist&p=&n_song=25&n_album=25&sub_type=songs&more=true&category=&sort_order=&includeMetaTags=0&ctx=wap6dot0&api_version=4&_format=json&_marker=0`).then(data=>data.text());
+
 const data=JSON.parse(extract(response));
 const songs=[]
 
 for(var i=0;i<data.topSongs.length;i++)
-{
+{//console.log(data.topSongs[i]);
   temp={
+    
+    id:getsongid(data.topSongs[i].perma_url),
     image:data.topSongs[i].image,
     eurl:data.topSongs[i].more_info.encrypted_media_url,
     title:data.topSongs[i].title,
     year:data.topSongs[i].year,
     lang:data.topSongs[i].language,
-
     by:data.topSongs[i].header_desc
   }
   songs.push(temp);
@@ -155,4 +167,4 @@ async function redirected_url(data_url)
 
 
 
-app.listen(process.env.PORT || 3001,()=>console.log(`running on ${process.env.PORT || 3002}`));
+app.listen(process.env.PORT || 3001,()=>console.log(`running on ${process.env.PORT || 3001}`));

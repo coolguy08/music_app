@@ -148,7 +148,7 @@ async function playnext()
     }
        if(!song.url)
        {
-        const data=await get(`${baseurl}get_song_by_eurl?eurl=${song.eurl}`);
+        const data=await get(`${baseurl}get_song_by_eurl?eurl=${song.eurl}&id=${song.id}`);
         stack[pointer].url=data.url;
 
        }
