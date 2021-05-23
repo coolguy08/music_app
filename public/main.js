@@ -295,8 +295,18 @@ audio.onpause=()=>{
 
 
 audio.onplay=()=>{
+    //when song start playing add the meta data
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title:document.getElementById('title').textContent,
+        artist: document.getElementById('by').textContent,
+        //album: 'The Ultimate Collection (Remastered)',
+        artwork: [
+         
+          { src: document.getElementById('song_img').src, sizes: '512x512', type: 'image/png' },
+        ]
+      });
+
     songimg.style="animation-play-state:play"
-    
     song_status.className='fa fa-pause fa-lg';
     
 }
@@ -368,5 +378,24 @@ document.getElementById('duration').innerHTML=new Date(audio.duration?audio.dura
 }
 
 
+
+if ('mediaSession' in navigator){
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title:document.getElementById('title').textContent,
+      artist: document.getElementById('by').textContent,
+      //album: 'The Ultimate Collection (Remastered)',
+      artwork: [
+       
+        { src: document.getElementById('song_img').src, sizes: '512x512', type: 'image/png' },
+      ]
+    });
+  
+    navigator.mediaSession.setActionHandler('play', function() { play_pause();});
+    navigator.mediaSession.setActionHandler('pause', function() { play_pause();});
+   
+    navigator.mediaSession.setActionHandler('previoustrack', function() { playprev(); });
+    navigator.mediaSession.setActionHandler('nexttrack', function() { playnext();});
+    
+  }
 
 
