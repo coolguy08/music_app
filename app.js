@@ -51,11 +51,11 @@ app.get('/song',async (req,res)=>{
 app.get('/get_song_by_eurl',async(req,res)=>{//get song by encrypted url
   // console.log(req.query.eurl)
   const media_url=decode(req.query.eurl);
-  if(cache[id])
+  if(cache[req.body.id])
   {
     const data=JSON.parse(cache[id]);
     res.json({'url':data.url});
-    return;
+    return; 
   }
   // console.log(media_url);
   geturl=`https://www.jiosaavn.com/api.php?__call=song.generateAuthToken&url=${media_url}&bitrate=160&api_version=4&_format=json&ctx=wap6dot0&_marker=0
