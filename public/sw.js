@@ -8,7 +8,6 @@ self.addEventListener('install', function(e) {
           '/main.css',
           '/manifest.json',
           '/logo512.png',
-          '/logo128.png',
           '/favicon.ico'
           
         ]);
