@@ -51,7 +51,7 @@ app.get('/song',async (req,res)=>{
 app.get('/get_song_by_eurl',async(req,res)=>{//get song by encrypted url
   // console.log(req.query.eurl)
   const media_url=decode(req.query.eurl);
-  if(cache[req.body.id])
+  if(cache[req.query.id])
   {
     const data=JSON.parse(cache[id]);
     res.json({'url':data.url});
