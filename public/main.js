@@ -9,7 +9,7 @@ function isloading(flag)
     else
     {
         document.querySelector('#play_pause').className='';
-     document.querySelector('#loader').className='' ;
+        document.querySelector('#loader').className='' ;
     }
 }
 //variables
@@ -35,10 +35,39 @@ function intialize()
      year=document.getElementById('year');
      lang=document.getElementById('lang');
      seeker=document.getElementById('seeker');
+     
 }
 
 intialize();
 
+async function check_storage()
+{
+    if(localStorage.song)
+     {
+         const data=JSON.parse(localStorage.song);
+         display(data);
+         console.log(data);
+         audio.src=data.url;
+         audio.currentTime=data.currenttime;
+         document.getElementById('song').className='';
+         seeker.value=audio.currentTime;
+
+
+     document.getElementById('current').innerHTML=new Date(audio.currentTime*1000).toISOString().substr(14, 5)
+     document.getElementById('duration').innerHTML=new Date(audio.duration?audio.duration*1000:237*1000).toISOString().substr(14, 5)
+     
+    
+     stack=await get(`${baseurl}songs?artistid=${localStorage.getItem('artist_id')}`); 
+    
+    }
+}
+check_storage();
+
+
+function set_song(data)//store the current song to localstorage
+{
+    localStorage.setItem('song',JSON.stringify(data));
+}
 
 function key(e)
 {
@@ -52,6 +81,7 @@ function key(e)
 
 function play_pause()
 {
+    
 if(audio.paused)
 {
     audio.play();
@@ -68,7 +98,9 @@ else{
 
 function display(data)
 { 
-    document.querySelector('title').innerText=data.title;
+   
+   
+  document.querySelector('title').innerText=data.title;
   songimg.src=data.image.replace('https','http');
   title.innerHTML=data.title;
   by.innerHTML=data.by;
@@ -91,7 +123,7 @@ async function search()
 
      const data=await get(`${baseurl}song?q=${term}`);
 
-   
+     
      const display_data={
          image:data.details.songs[0].image,
          title:data.details.songs[0].title,
@@ -101,8 +133,9 @@ async function search()
      }
      
     display(display_data);
-    
-    // document.querySelector('audio')?document.querySelector('audio').remove():'';
+    display_data.url=data.url;
+    set_song(display_data);
+
     audio.src=data.url;
     audio.play();
     
@@ -118,7 +151,7 @@ async function search()
     //the artist whose song to play next
     const artist_id=data.details.songs[0].more_info.artistMap.primary_artists[0].perma_url.split('/').slice(-1)[0];
     
-    
+    localStorage.setItem('artist_id',artist_id);
     stack=await get(`${baseurl}songs?artistid=${artist_id}`);
 
    
@@ -132,25 +165,26 @@ async function search()
 
 async function playnext()
 {
-   
+   if(stack.length==0)
+   {
+       alert("Song List Empty\nSearch a song");
+       return;
+   }
     
     pointer=(pointer%(stack.length-1))+1;
       
     var song=stack[pointer];
 
-    intialize(); 
+    //intialize(); 
 
     isloading(true);
         
-    if(!song)
-    {
-        await setTimeout(()=>(console.log('waiting')),2000);
-    }
+    
        if(!song.url)
        {
         const data=await get(`${baseurl}get_song_by_eurl?eurl=${song.eurl}&id=${song.id}`);
         stack[pointer].url=data.url;
-
+        song=stack[pointer];
        }
       
             
@@ -163,8 +197,11 @@ async function playnext()
         language:song.lang,
     }
     
-       display(display_data);
-        audio.src=song.url?song.url:data.url;
+        display(display_data);
+        display_data.url=song.url;
+        set_song(display_data);
+        audio.src=song.url;
+
         audio.play();
         
         //to unhide display
@@ -184,20 +221,20 @@ async function playnext()
 }
 
 async function playprev()
-{
+{  if(stack.length==0)
+    {
+        alert("Song List Empty\nSearch a song");
+        return;
+    }
     
     pointer?pointer=pointer-1:pointer=stack.length-1;
     
     var song=stack[pointer];
 
-    intialize(); 
+    //intialize(); 
 
     isloading(true);
 
-    if(!song)
-    {
-        await setTimeout(()=>(console.log('waiting')),2000);
-    }
         
     if(!song.url)
     {
@@ -215,7 +252,7 @@ async function playprev()
         language:song.lang,
     }
     
-       display(display_data);
+        display(display_data);
         audio.src=song.url?song.url:data.url;
         audio.play();
         
@@ -274,10 +311,14 @@ audio.ontimeupdate=()=>{
     
     songimg.style="animation-play-state:play";
     seeker.max=audio.duration; 
-    song_status.className='fa fa-pause fa-lg';
+    //song_status.className='fa fa-pause fa-lg';
     //console.log(Math.round(audio.duration-audio.currentTime));
+    
+    const cur_song=JSON.parse(localStorage.getItem('song'));
+    cur_song.currenttime=audio.currentTime;
+    localStorage.setItem('song',JSON.stringify(cur_song));
 
-    if(Math.round(audio.duration-audio.currentTime)==5)
+    if(Math.round(audio.duration-audio.currentTime)==0)
     {
         playnext();
     }
