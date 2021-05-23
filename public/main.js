@@ -81,7 +81,12 @@ function key(e)
 
 function play_pause()
 {
-    
+
+    if(localStorage.song==undefined)
+    {
+        alert('Search for a Song First');
+        return;
+    }
 if(audio.paused)
 {
     audio.play();
@@ -383,7 +388,6 @@ if ('mediaSession' in navigator){
     navigator.mediaSession.metadata = new MediaMetadata({
       title:document.getElementById('title').textContent,
       artist: document.getElementById('by').textContent,
-      //album: 'The Ultimate Collection (Remastered)',
       artwork: [
        
         { src: document.getElementById('song_img').src, sizes: '512x512', type: 'image/png' },

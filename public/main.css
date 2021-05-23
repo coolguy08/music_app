@@ -15,12 +15,14 @@
 
     font-size: 3em;
 }
+
 input{
     width:80%;
     color:green;
     border:2px solid green;
     align-items: center;
     font-size: 1em;
+   
     border-radius: 20px;
     padding: 10px;
     outline: none;
@@ -209,3 +211,16 @@ input{
     100% {transform: rotate(360deg);}
 
 }
+
+/* @media screen and (min-width: 320px) and (max-width: 767px) and (orientation: landscape) {
+    html {
+      transform: rotate(-90deg);
+      transform-origin: left top;
+      width: 100vh;
+      overflow-x: hidden;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      height:100vw;
+    }
+  } */
