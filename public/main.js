@@ -46,7 +46,7 @@ async function check_storage()
      {
          const data=JSON.parse(localStorage.song);
          display(data);
-         console.log(data);
+         
          audio.src=data.url;
          audio.currentTime=data.currenttime;
          document.getElementById('song').className='';
@@ -306,6 +306,41 @@ seeker.oninput=(e)=>{
 audio.currentTime=e.target.value;
 }
 
+//code to check for buffering
+let slowInternetTimeout = null;
+
+// audio.addEventListener('loadstart', function () {
+//     //show buffering
+//     isloading(true);
+// });
+audio.addEventListener('waiting', () => {
+
+    slowInternetTimeout = setTimeout(() => {
+    //show buffering
+    isloading(true);
+});
+
+});
+
+audio.addEventListener('playing', () => {
+if(slowInternetTimeout != null){
+    clearTimeout(slowInternetTimeout);
+    slowInternetTimeout = null;
+    //continue playing
+    isloading(false);
+    audio.play();
+    }
+    
+});
+
+
+
+
+
+
+audio.onended=()=>{
+ playnext();
+}
 
 audio.ontimeupdate=()=>{
     
@@ -318,10 +353,7 @@ audio.ontimeupdate=()=>{
     cur_song.currenttime=audio.currentTime;
     localStorage.setItem('song',JSON.stringify(cur_song));
 
-    if(Math.round(audio.duration-audio.currentTime)==0)
-    {
-        playnext();
-    }
+   
    
 
 
